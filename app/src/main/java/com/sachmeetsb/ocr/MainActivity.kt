@@ -5,10 +5,13 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.Bundle
 import android.provider.MediaStore
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.logging.Logger
 
@@ -24,7 +27,7 @@ class MainActivity : AppCompatActivity() {
         val capture = findViewById<Button>(R.id.button)
         val shift = findViewById<Button>(R.id.button2)
         shift.setOnClickListener{
-            shift()
+            shift(it)
         }
         capture.setOnClickListener {
             val i = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
@@ -72,11 +75,23 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    fun shift(){
+    fun shift(view: View){
 
-        val red = findViewById<EditText>(R.id.RED).text.toString().toInt()
-        val green = findViewById<EditText>(R.id.GREEN).text.toString().toInt()
-        val blue = findViewById<EditText>(R.id.BLUE).text.toString().toInt()
+        val red = findViewById<EditText>(R.id.RED).text.toString()
+        val green = findViewById<EditText>(R.id.GREEN).text.toString()
+        val blue = findViewById<EditText>(R.id.BLUE).text.toString()
+
+        if(red.matches(Regex("")) or blue.matches(Regex("")) or green.matches(Regex("")))
+        {
+            Snackbar.make(view,"Please Enter RGB Values",Snackbar.LENGTH_SHORT).show()
+            //Toast.makeText(this,"Please fill RGB Values", Toast.LENGTH_LONG).show()
+            return
+        }
+
+        val redInt = red.toInt()
+        val greenInt = green.toInt()
+        val blueInt = blue.toInt()
+
 
         val width: Int = srcBmp.getWidth()
         val height: Int = srcBmp.getHeight()
@@ -85,7 +100,7 @@ class MainActivity : AppCompatActivity() {
         val dstHSV = FloatArray(3)
 
         val dstBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-        Color.RGBToHSV(red,green,blue , dstHSV)
+        Color.RGBToHSV(red.toInt(),green.toInt(),blue.toInt() , dstHSV)
 
         for (row in 0 until height) {
             for (col in 0 until width) {
