@@ -6,13 +6,12 @@ import android.graphics.Color
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
+import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
+
 import java.util.logging.Logger
 
 
@@ -23,12 +22,32 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
+        var seekValue: Int = 0
         val capture = findViewById<Button>(R.id.button)
         val shift = findViewById<Button>(R.id.button2)
-        shift.setOnClickListener{
-            shift(it)
-        }
+        val seekBar :SeekBar = findViewById<SeekBar>(R.id.seekBar4)
+        seekBar.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener{
+
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+               // seekBar?.setProgress(progress)
+            }
+            override fun onStartTrackingTouch(seek: SeekBar) {
+                    // write custom code for progress is started
+                }
+
+                override fun onStopTrackingTouch(seek: SeekBar) {
+                    // write custom code for progress is stopped
+//                    Toast.makeText(this@MainActivity,
+//                        "Progress is: " + seek.progress + "%",
+//                        Toast.LENGTH_SHORT).show()
+                        seek(seek.progress)
+                }
+            })
+
+
+//        shift.setOnClickListener{
+//            shift(it)
+//        }
         capture.setOnClickListener {
             val i = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
             startActivityForResult(i,17)
@@ -75,55 +94,83 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    fun shift(view: View){
+//    fun shift(view: View){
+//
+//        val red = findViewById<EditText>(R.id.RED).text.toString()
+//        val green = findViewById<EditText>(R.id.GREEN).text.toString()
+//        val blue = findViewById<EditText>(R.id.BLUE).text.toString()
+//
+//        if(red.matches(Regex("")) or blue.matches(Regex("")) or green.matches(Regex("")))
+//        {
+//            Snackbar.make(view,"Please Enter RGB Values",Snackbar.LENGTH_SHORT).show()
+//            //Toast.makeText(this,"Please fill RGB Values", Toast.LENGTH_LONG).show()
+//            return
+//        }
+//
+//        val redInt = red.toInt()
+//        val greenInt = green.toInt()
+//        val blueInt = blue.toInt()
+//
+//
+//        val width: Int = srcBmp.getWidth()
+//        val height: Int = srcBmp.getHeight()
+//
+//        val srcHSV = FloatArray(3)
+//        val dstHSV = FloatArray(3)
+//
+//        val dstBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+//        Color.RGBToHSV(red.toInt(),green.toInt(),blue.toInt() , dstHSV)
+//
+//        for (row in 0 until height) {
+//            for (col in 0 until width) {
+//                val pixel: Int = srcBmp.getPixel(col, row)
+//                // val alpha: Int = Color.alpha(pixel)
+//                Color.colorToHSV(pixel, srcHSV)
+//                //print(dstHSV)
+//                // If it area to be painted set only value of original image
+//                //Logger.getLogger(MainActivity::class.java.name).warning(pixel.toString())
+//                //dstHSV[0] = srcHSV[0]
+//                dstHSV[1] = srcHSV[1] // value
+//                dstHSV[2] = srcHSV[2]
+//                dstBitmap.setPixel(col, row, Color.HSVToColor(dstHSV))
+//            }
+//        }
+//
+//
+//
+//        imageView.setImageBitmap(dstBitmap)
+//
+//
+//    }
+//
 
-        val red = findViewById<EditText>(R.id.RED).text.toString()
-        val green = findViewById<EditText>(R.id.GREEN).text.toString()
-        val blue = findViewById<EditText>(R.id.BLUE).text.toString()
+    fun seek(x: Int){
+            val width: Int = srcBmp.getWidth()
+            val height: Int = srcBmp.getHeight()
 
-        if(red.matches(Regex("")) or blue.matches(Regex("")) or green.matches(Regex("")))
-        {
-            Snackbar.make(view,"Please Enter RGB Values",Snackbar.LENGTH_SHORT).show()
-            //Toast.makeText(this,"Please fill RGB Values", Toast.LENGTH_LONG).show()
-            return
-        }
+            val srcHSV = FloatArray(3)
+            val dstHSV = FloatArray(3)
 
-        val redInt = red.toInt()
-        val greenInt = green.toInt()
-        val blueInt = blue.toInt()
+            val dstBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
 
+            for (row in 0 until height) {
+                for (col in 0 until width) {
+                    val pixel: Int = srcBmp.getPixel(col, row)
+                    val alpha: Int = Color.alpha(pixel)
+                    Color.colorToHSV(pixel, srcHSV)
 
-        val width: Int = srcBmp.getWidth()
-        val height: Int = srcBmp.getHeight()
-
-        val srcHSV = FloatArray(3)
-        val dstHSV = FloatArray(3)
-
-        val dstBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-        Color.RGBToHSV(red.toInt(),green.toInt(),blue.toInt() , dstHSV)
-
-        for (row in 0 until height) {
-            for (col in 0 until width) {
-                val pixel: Int = srcBmp.getPixel(col, row)
-                // val alpha: Int = Color.alpha(pixel)
-                Color.colorToHSV(pixel, srcHSV)
-                //print(dstHSV)
-                // If it area to be painted set only value of original image
-                //Logger.getLogger(MainActivity::class.java.name).warning(pixel.toString())
-                //dstHSV[0] = srcHSV[0]
-                dstHSV[1] = srcHSV[1] // value
-                dstHSV[2] = srcHSV[2]
-                dstBitmap.setPixel(col, row, Color.HSVToColor(dstHSV))
+                    Color.colorToHSV(x, dstHSV)
+                    //print(dstHSV)
+                    // If it area to be painted set only value of original image
+                    //Logger.getLogger(MainActivity::class.java.name).warning(pixel.toString())
+                    //dstHSV[0] = srcHSV[0]
+                    dstHSV[1] = srcHSV[1] // value
+                    dstHSV[2] = srcHSV[2]
+                    dstBitmap.setPixel(col, row, Color.HSVToColor(alpha, dstHSV))
+                }
             }
-        }
-
-
-
         imageView.setImageBitmap(dstBitmap)
-
-
     }
-
 
 
 }
