@@ -3,6 +3,7 @@ package com.sachmeetsb.ocr
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
+import android.media.Image
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.View
@@ -17,14 +18,17 @@ import java.util.logging.Logger
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var srcBmp : Bitmap
+    var srcBmp : Bitmap? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         var seekValue: Int = 0
+        val imageCol = findViewById<ImageView>(R.id.col)
+        imageCol.setBackgroundColor(Color.rgb(12,12,12))
         val capture = findViewById<Button>(R.id.button)
         val shift = findViewById<Button>(R.id.button2)
+        shift.visibility = View.GONE
         val seekBar :SeekBar = findViewById<SeekBar>(R.id.seekBar4)
         seekBar.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener{
 
@@ -40,7 +44,11 @@ class MainActivity : AppCompatActivity() {
 //                    Toast.makeText(this@MainActivity,
 //                        "Progress is: " + seek.progress + "%",
 //                        Toast.LENGTH_SHORT).show()
-                        seek(seek.progress)
+
+                    if(srcBmp!=null)
+                        seek(seek.progress*10000)
+
+                        imageCol.setBackgroundColor(seek.progress*10000)
                 }
             })
 
@@ -64,7 +72,7 @@ class MainActivity : AppCompatActivity() {
 //
 //            val srcHSV = FloatArray(3)
 //            val dstHSV = FloatArray(3)
-//
+
 //            val dstBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
 //
 //            for (row in 0 until height) {
@@ -84,7 +92,7 @@ class MainActivity : AppCompatActivity() {
 //                }
 //            }
 
-
+            Snackbar.make(this.findViewById(android.R.id.content),"Move slider to see results",Snackbar.LENGTH_SHORT).show()
 
             imageView.setImageBitmap(srcBmp)
 
@@ -145,8 +153,10 @@ class MainActivity : AppCompatActivity() {
 //
 
     fun seek(x: Int){
-            val width: Int = srcBmp.getWidth()
-            val height: Int = srcBmp.getHeight()
+
+
+            val width: Int = srcBmp!!.getWidth()
+            val height: Int = srcBmp!!.getHeight()
 
             val srcHSV = FloatArray(3)
             val dstHSV = FloatArray(3)
@@ -155,7 +165,7 @@ class MainActivity : AppCompatActivity() {
 
             for (row in 0 until height) {
                 for (col in 0 until width) {
-                    val pixel: Int = srcBmp.getPixel(col, row)
+                    val pixel: Int = srcBmp!!.getPixel(col, row)
                     val alpha: Int = Color.alpha(pixel)
                     Color.colorToHSV(pixel, srcHSV)
 
